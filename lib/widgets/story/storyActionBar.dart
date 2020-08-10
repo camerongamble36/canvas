@@ -2,11 +2,19 @@ import 'package:canvas/providers/auth.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class StoryActionBar extends StatelessWidget {
+class StoryActionBar extends StatefulWidget {
+  int currentPage;
+  final int totalPages;
+
+  StoryActionBar(this.currentPage, this.totalPages);
+
+  @override
+  _StoryActionBarState createState() => _StoryActionBarState();
+}
+
+class _StoryActionBarState extends State<StoryActionBar> {
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final userStory = authProvider.currentUser.story;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -14,15 +22,35 @@ class StoryActionBar extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           textColor: Colors.white,
           child: Text('Prev.'),
-          onPressed: () {},
+          onPressed: () {
+            if (this.widget.currentPage >= 1) {
+              setState(() {
+                this.widget.currentPage--;
+              });
+            } else {
+              setState(() {
+                this.widget.currentPage = 0;
+              });
+            }
+          },
         ),
         Text(
-            '${userStory.currentPage.toString()} / ${userStory.pages.toString()} pages'),
+            '${widget.currentPage.toString()} / ${widget.totalPages.toString()} pages'),
         FlatButton(
           color: Theme.of(context).primaryColor,
           textColor: Colors.white,
           child: Text('Next'),
-          onPressed: () {},
+          onPressed: () {
+            if (this.widget.currentPage <= this.widget.totalPages - 1) {
+              setState(() {
+                this.widget.currentPage++;
+              });
+            } else {
+              setState(() {
+                this.widget.currentPage = this.widget.totalPages;
+              });
+            }
+          },
         ),
       ],
     );

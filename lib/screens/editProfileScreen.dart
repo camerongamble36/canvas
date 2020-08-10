@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
+  // final String authToken;
+
+  // EditProfileScreen(this.authToken);
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }

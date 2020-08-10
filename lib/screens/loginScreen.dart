@@ -28,19 +28,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _submit() async {
+    setState(() {
+      this.isLoading = true;
+    });
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     // if (this._form.currentState.validate()) {
     //   return;
     // }
 
     this._form.currentState.save();
-    setState(() {
-      this.isLoading = true;
-    });
     await authProvider.login(
       this.emailTextController.value.text,
       this.passwordTextController.value.text,
     );
+    //     .then((value) {
+
+    // });
+
     setState(() {
       this.isLoading = false;
     });

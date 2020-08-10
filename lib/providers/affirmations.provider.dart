@@ -6,17 +6,19 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class AffirmationsProvider with ChangeNotifier {
+  final String authToken;
+
   List<Affirmation> affirmations = [];
-  // final String authToken;
+
+  AffirmationsProvider(this.authToken, this.affirmations);
 
   get allAffirmations {
     return [...this.affirmations];
   }
 
-  // AffirmationsProvider(this.authToken, this.affirmations);
-
   addNewAffirmation(Affirmation aff) {
-    final url = 'https://canvas-c6df5.firebaseio.com/affirmations.json';
+    final url =
+        'https://canvas-c6df5.firebaseio.com/affirmations.json?auth=$authToken';
     final timestamp = DateFormat.yMMMd().format(DateTime.now());
     http
         .post(
@@ -37,7 +39,8 @@ class AffirmationsProvider with ChangeNotifier {
 
   Future<void> fetchAndSetAffirmations() async {
     try {
-      final url = 'https://canvas-c6df5.firebaseio.com/affirmations.json';
+      final url =
+          'https://canvas-c6df5.firebaseio.com/affirmations.json?auth=$authToken';
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) return;
@@ -52,6 +55,7 @@ class AffirmationsProvider with ChangeNotifier {
           });
       this.affirmations = loadedAffirmations;
       notifyListeners();
+      print(this.affirmations);
     } catch (error) {
       throw (error);
     }

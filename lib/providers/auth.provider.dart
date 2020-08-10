@@ -12,10 +12,11 @@ class AuthProvider with ChangeNotifier {
   DateTime _expiryDate;
   String _userId;
 
-  final User _user = new User(
-    id: '1',
+  User _user = new User(
+    id: "1",
     firstname: "Cameron",
     lastname: "Gamble",
+    username: "stopitcam",
     affirmations: [],
     attributes: [],
     story: Story(
@@ -24,15 +25,38 @@ class AuthProvider with ChangeNotifier {
       title: 'New Story',
       ownerUsername: "stopitcam",
       lastUpdated: "Idk",
-      currentPage: 8,
+      currentPage: 250,
       pages: 256,
     ),
     dob: "11/30/95",
   );
 
   get currentUser {
+    // try {
+    //   final url =
+    //       'https://canvas-c6df5.firebaseio.com/users/$_userId.json?auth=$token';
+    //   final response = await http.get(url);
+    //   final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    //   if (extractedData == null) return;
+    //   final loadedUser = new User();
+    //   extractedData.forEach((userId, userData) {
+    //     loadedUser.id = userId;
+    //     loadedUser.email = userData['email'];
+    //     loadedUser.imageUrl = userData['imageUrl'];
+    //     loadedUser.firstname = userData['firstname'];
+    //     loadedUser.lastname = userData['lastname'];
+    //     loadedUser.username = userData['username'];
+    //     loadedUser.attributes = userData['attributes'];
+    //     loadedUser.affirmations = userData['affirmations'];
+    //   });
+    //   this._user = loadedUser;
+    // } catch (e) {
+    //   throw (e);
+    // }
     return this._user;
   }
+
+  User get currentUser1 {}
 
   bool get isAuth {
     return token != null;
@@ -53,7 +77,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   addAttribute() {
-    const url = 'https://canvas-c6df5.firebaseio.com/attributes.json';
+    final url =
+        'https://canvas-c6df5.firebaseio.com/users/$_userId/attributes.json';
     final timestamp = DateFormat.yMMMd().format(DateTime.now());
     http.post(
       url,
@@ -78,16 +103,38 @@ class AuthProvider with ChangeNotifier {
         },
       ),
     );
+
     final responseData = json.decode(response.body);
     if (responseData['error'] != null) {
       throw HttpException(responseData['error']['message']);
     }
     _token = responseData['idToken'];
     _userId = responseData['localId'];
-    final newUser = User(
-      // Might need to change ID
-      id: responseData['localId'],
+    _expiryDate = DateTime.now().add(
+      Duration(
+        seconds: int.parse(
+          responseData['expiresIn'],
+        ),
+      ),
     );
+    final newUser = new User(
+      id: _userId,
+      email: email,
+      imageUrl: "",
+      username: "",
+      firstname: "",
+      lastname: "",
+      affirmations: [],
+      attributes: [],
+      story: null,
+      dob: "",
+      tiles: ['starter', 'affirmations', 'attributes'],
+    );
+
+    this.setupNewUser(_userId, newUser).then((value) {
+      print(newUser);
+    });
+
     print(json.decode(response.body));
   }
 
@@ -120,14 +167,29 @@ class AuthProvider with ChangeNotifier {
     print(json.decode(response.body));
   }
 
-  updateUser(User user) {
-    print(user.firstname);
-    print(user.lastname);
-    print(user.username);
-    print(user.tiles);
+  Future<void> updateUser(User user) async {
+    // final userIndex = _
   }
 
   // Future<void> fetchAndSetStory() async {
   //   http.get(url);
   // }
+
+  Future<void> setupNewUser(String id, User user) {
+    final url = 'https://canvas-c6df5.firebaseio.com/users/$id.json';
+    return http.post(
+      url,
+      body: json.encode({
+        'imageUrl': user.imageUrl,
+        'firstname': user.firstname,
+        'lastname': user.lastname,
+        'username': user.username,
+        'email': user.email,
+        'affirmations': user.affirmations,
+        'attributes': user.attributes,
+        'story': user.story,
+        'dob': user.dob,
+      }),
+    );
+  }
 }

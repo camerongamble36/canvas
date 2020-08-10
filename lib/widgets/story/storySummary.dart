@@ -6,30 +6,28 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class StorySummary extends StatelessWidget {
-  // final String title;
-  // final String ownerUsername;
-  // final String timestamp;
+  final String title;
+  final String username;
+  final String timestamp;
 
-  // StorySummary(this.title, this.ownerUsername, this.timestamp);
+  StorySummary(this.title, this.username, this.timestamp);
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final userStory = authProvider.currentUser.story;
     return ListTile(
       contentPadding: EdgeInsets.all(0),
       title: Text(
-        userStory.title,
+        title,
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
-      subtitle: Text('@${userStory.ownerUsername}'),
+      subtitle: Text('@$username'),
       trailing: Container(
         margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              userStory.lastUpdated,
+              timestamp,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),

@@ -2,7 +2,11 @@ import 'package:canvas/model/timelineEvent.dart';
 import 'package:flutter/material.dart';
 
 class TimelineProvider with ChangeNotifier {
-  final List<TimelineEvent> _events = [
+  final String authToken;
+
+  TimelineProvider(this.authToken, this._events);
+
+  List<TimelineEvent> _events = [
     TimelineEvent(
       description: "This is a shitty description",
       type: EventType.Hello,

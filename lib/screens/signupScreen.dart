@@ -30,22 +30,22 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void _submit() async {
+    setState(() {
+      isLoading = true;
+    });
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     if (this._form.currentState.validate()) {
       return;
     }
     this._form.currentState.save();
-    setState(() {
-      isLoading = true;
-    });
 
     await authProvider
         .signup(
           this.emailTextController.value.text,
           this.passwordTextController.value.text,
         )
-        .then((value) => {
+        .then((_) => {
               setState(() {
                 isLoading = false;
               }),

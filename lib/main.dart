@@ -27,20 +27,39 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => AffirmationsProvider(),
+        ChangeNotifierProxyProvider<AuthProvider, AffirmationsProvider>(
+          update: (ctx, auth, previousAffirmations) => AffirmationsProvider(
+            auth.token,
+            previousAffirmations == null
+                ? []
+                : previousAffirmations.affirmations,
+          ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => CanvasProvider(),
+        ChangeNotifierProxyProvider<AuthProvider, StoriesProvider>(
+          update: (ctx, auth, previousStories) => StoriesProvider(
+            auth.token,
+            previousStories == null ? [] : previousStories.allStories,
+          ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => StoriesProvider(),
+        ChangeNotifierProxyProvider<AuthProvider, NarratorProvider>(
+          update: (ctx, auth, previousNarrator) => NarratorProvider(
+            auth.token,
+            previousNarrator == null
+                ? []
+                : previousNarrator.currentNarratorConfig,
+          ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => NarratorProvider(),
+        ChangeNotifierProxyProvider<AuthProvider, CanvasProvider>(
+          update: (ctx, auth, previousCanvas) => CanvasProvider(
+            auth.token,
+            previousCanvas == null ? [] : previousCanvas.canvases,
+          ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => TimelineProvider(),
+        ChangeNotifierProxyProvider<AuthProvider, TimelineProvider>(
+          update: (ctx, auth, previousEvents) => TimelineProvider(
+            auth.token,
+            previousEvents == null ? [] : previousEvents.fullTimeline,
+          ),
         ),
       ],
       child: Consumer<AuthProvider>(
